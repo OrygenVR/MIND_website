@@ -2,17 +2,89 @@
 <html>
 <head>
   <meta charset="UTF-8">
-  <title>Request Access</title>
+  <title>Request Early Access</title>
   <script src="https://www.gstatic.com/firebasejs/10.12.1/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.12.1/firebase-firestore-compat.js"></script>
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background-color: #f6f7fb;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      margin: 0;
+    }
+
+    .card {
+      background: white;
+      padding: 40px 30px;
+      border-radius: 16px;
+      box-shadow: 0 20px 30px rgba(0, 0, 0, 0.05);
+      width: 100%;
+      max-width: 380px;
+      text-align: center;
+    }
+
+    h2 {
+      font-size: 24px;
+      margin-bottom: 24px;
+      color: #111827;
+    }
+
+    input[type="email"] {
+      width: 100%;
+      padding: 14px;
+      border: 2px solid #cbd5e1;
+      border-radius: 8px;
+      font-size: 16px;
+      margin-bottom: 20px;
+      transition: border-color 0.2s;
+    }
+
+    input[type="email"]:focus {
+      border-color: #3b82f6;
+      outline: none;
+    }
+
+    button {
+      width: 100%;
+      padding: 14px;
+      font-size: 16px;
+      background-color: #2563eb;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: 500;
+      transition: background-color 0.2s;
+    }
+
+    button:hover {
+      background-color: #1d4ed8;
+    }
+
+    #statusMessage {
+      margin-top: 16px;
+      font-size: 14px;
+      color: #555;
+    }
+  </style>
 </head>
 <body>
-  <h2>Request Early Access</h2>
-  <form id="requestForm">
-    <input type="email" id="emailInput" placeholder="Enter your email" required />
-    <button type="submit">Submit</button>
-  </form>
-  <p id="statusMessage"></p>
+
+  <div class="card">
+    <h2>Request Early Access</h2>
+    <form id="requestForm">
+      <input type="email" id="emailInput" placeholder="Enter your email" required />
+      <button type="submit">Submit</button>
+    </form>
+    <p id="statusMessage"></p>
+  </div>
 
   <script>
     const firebaseConfig = {
@@ -26,18 +98,24 @@
 
     document.getElementById("requestForm").addEventListener("submit", function (e) {
       e.preventDefault();
-      const email = document.getElementById("emailInput").value;
+      const email = document.getElementById("emailInput").value.trim();
+
+      if (!email) {
+        document.getElementById("statusMessage").textContent = "Please enter a valid email.";
+        return;
+      }
 
       db.collection("userRequests").add({
         email: email,
         timestamp: firebase.firestore.FieldValue.serverTimestamp()
       })
       .then(() => {
-        document.getElementById("statusMessage").textContent = "Email submitted!";
+        document.getElementById("statusMessage").textContent = "✅ Email submitted!";
+        document.getElementById("emailInput").value = "";
       })
       .catch((error) => {
         console.error("Error writing to Firestore: ", error);
-        document.getElementById("statusMessage").textContent = "Error. Try again later.";
+        document.getElementById("statusMessage").textContent = "❌ Error. Please try again later.";
       });
     });
   </script>
