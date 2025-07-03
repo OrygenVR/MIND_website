@@ -100,7 +100,8 @@
       e.preventDefault();
       const email = document.getElementById("emailInput").value.trim();
 
-      if (!email) {
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/; // Basic email format validation
+      if (!email || !emailRegex.test(email)) {
         document.getElementById("statusMessage").textContent = "Please enter a valid email.";
         return;
       }
